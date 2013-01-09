@@ -4,7 +4,7 @@
 
     <servlet>
         <servlet-name>root</servlet-name>
-        <servlet-class>fr.gbloquel.RootServlet</servlet-class>
+        <servlet-class>fr.gbloquel.codestory.RootServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

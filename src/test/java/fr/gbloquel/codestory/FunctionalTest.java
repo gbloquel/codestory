@@ -44,5 +44,9 @@ public class FunctionalTest {
         assertTextPresent("OUI");
         
 	}
-	
+	@Test
+	public void should_always_yes() {
+		beginAt("?q=Est+ce+que+tu+reponds+toujours+oui(OUI/NON)");
+		assertTextPresent("NON");
+	}
 }

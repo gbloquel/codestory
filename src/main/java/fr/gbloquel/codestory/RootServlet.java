@@ -15,9 +15,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 public class RootServlet extends HttpServlet {
 
-	private static final String ANSWER_YES = "OUI";
 	
-	private static final Pattern YESNO_QUESTION_PATTERN = Pattern.compile("Es tu .+\\(OUI/NON\\)");
+	private static final String ANSWER_YES = "OUI";
+	private static final String ANSWER_NO = "NON";
+	
+	private static final Pattern YESNO_QUESTION_PATTERN = Pattern.compile("Es.+\\(OUI/NON\\)");
 	
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,13 +30,27 @@ public class RootServlet extends HttpServlet {
     	response.getWriter().write(responseText);
     }
 
+    /**
+     * Check if the request is a question
+     * @param request {@link HttpServletRequest}
+     * @return true if it is a question
+     */
     private boolean isQuestion(HttpServletRequest request) {
     	return request.getParameter("q")!= null;
     }
     
+    /**
+     * Answer to the question
+     * @param question the question
+     * @return answer the answer
+     */
     private String answer(String question) {
     	Matcher matcher = YESNO_QUESTION_PATTERN.matcher(question);
     	if(matcher.matches()) {
+    		if(question.equals("Est ce que tu reponds toujours oui(OUI/NON)")) {
+    			return ANSWER_NO;
+    		}
+    		
     		return ANSWER_YES;
     	}
     	

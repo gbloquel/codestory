@@ -13,16 +13,30 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 public class RootServlet extends HttpServlet {
 
+	private static final String ANSWER_YES = "OUI";
+	
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getWriter().write(answer(req.getParameter("q")));
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String responseText = "";
+    	if(isQuestion(request)) {
+        	responseText = answer(request.getParameter("q"));
+        }
+    	response.getWriter().write(responseText);
     }
 
-    String answer(String parameter) {
+    private boolean isQuestion(HttpServletRequest request) {
+    	return request.getParameter("q")!= null;
+    }
+    
+    private String answer(String parameter) {
+  
     	if(parameter.equals("Quelle est ton adresse email"))
     		return "gregory.bloquel@gmail.com";
     	else if(parameter.equals("Es tu abonne a la mailing list(OUI/NON)")) {
-    		return "OUI";
+    		return ANSWER_YES;
+    	}
+    	else if(parameter.equals("Es tu heureux de participer(OUI/NON)")) {
+    		return ANSWER_YES;
     	}
     	return "";
     }

@@ -1,8 +1,10 @@
 package fr.gbloquel.codestory;
 
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static net.sourceforge.jwebunit.junit.JWebUnit.*;
+import static net.sourceforge.jwebunit.junit.JWebUnit.assertTextPresent;
+import static net.sourceforge.jwebunit.junit.JWebUnit.beginAt;
+import static net.sourceforge.jwebunit.junit.JWebUnit.setBaseUrl;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +31,11 @@ public class FunctionalTest {
         
 	}
 	
-	
+	@Test
+	public void should_be_happy() {
+		beginAt("/?q=Es+tu+heureux+de+participer(OUI/NON)");
+        assertTextPresent("OUI");
+        
+	}
 	
 }

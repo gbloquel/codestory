@@ -38,4 +38,11 @@ public class FunctionalTest {
         
 	}
 	
+	@Test
+	public void should_receive_markdown_format() {
+		beginAt("/?q=Es+tu+pret+a+recevoir+une+enonce+au+format+markdown+par+http+post(OUI/NON)");
+        assertTextPresent("OUI");
+        
+	}
+	
 }

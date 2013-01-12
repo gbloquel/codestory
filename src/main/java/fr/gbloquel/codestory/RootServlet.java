@@ -19,12 +19,17 @@ public class RootServlet extends HttpServlet {
     }
 
     String answer(String parameter) {
-        return "gregory.bloquel@gmail.com";
+    	if(parameter.equals("Quelle est ton adresse email"))
+    		return "gregory.bloquel@gmail.com";
+    	else if(parameter.equals("Es tu abonne a la mailing list(OUI/NON)")) {
+    		return "OUI";
+    	}
+    	return "";
     }
 
     
     public static void main(String[] args) throws Exception {
-        Server server = new Server(8080);
+        Server server = new Server(6543);
         ServletContextHandler context = new ServletContextHandler(server, "/");
         context.addServlet(new ServletHolder(new RootServlet()), "/*");
         server.setHandler(context);

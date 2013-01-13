@@ -68,4 +68,11 @@ public class FunctionalTest {
 		assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
 		
 	}
+	@Test
+	public void should_receive_statement() {
+		beginAt("/?q=As+tu+bien+recu+le+premier+enonce(OUI/NON)");
+		assertTextPresent("OUI");
+	}
+	
+
 }

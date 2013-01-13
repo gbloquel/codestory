@@ -15,7 +15,7 @@ public class RootResource {
 	private static final String ANSWER_NO = "NON";
 
 	private static final Pattern YESNO_QUESTION_PATTERN = Pattern
-			.compile("Es.+\\(OUI/NON\\)");
+			.compile(".+\\(OUI/NON\\)");
 
 	
 	@GET

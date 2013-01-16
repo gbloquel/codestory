@@ -74,5 +74,17 @@ public class FunctionalTest {
 		assertTextPresent("OUI");
 	}
 	
+	
+	@Test
+	public void should_scalaskel_change_1() {
+		beginAt("/scalaskel/change/1");
+		assertTextPresent("{\"foo\":1}");
+	}
+	
+	@Test
+	public void should_scalaskel_change_7() {
+		beginAt("/scalaskel/change/7");
+		assertTextPresent("[{\"bar\":1},{\"foo\":7}]"); 
+	}
 
 }

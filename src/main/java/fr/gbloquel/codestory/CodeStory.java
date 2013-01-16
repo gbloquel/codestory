@@ -28,6 +28,8 @@ public class CodeStory {
 				"com.sun.jersey.api.core.PackagesResourceConfig");
 		sh.setInitParameter("com.sun.jersey.config.property.packages",
 				"fr.gbloquel.codestory.services");
+		sh.setInitParameter("com.sun.jersey.api.json.POJOMappingFeature", "true");
+		
 		Server server = new Server(6543);
 
 		ServletContextHandler context = new ServletContextHandler(server, "/",

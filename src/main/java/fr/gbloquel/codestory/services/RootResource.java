@@ -3,6 +3,7 @@ package fr.gbloquel.codestory.services;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -17,9 +18,11 @@ public class RootResource {
 	private static final Pattern YESNO_QUESTION_PATTERN = Pattern
 			.compile(".+\\(OUI/NON\\)");
 
+	private static final Pattern ADDITION_PATTERN = Pattern.compile("(\\d)\\+(\\d)");
+	
 	
 	@GET
-	public Response question(@QueryParam("q") String question) {
+	public Response question(@Encoded @QueryParam("q") String question) {
 		if(question == null) {
 			return Response.serverError().build();
 		}
@@ -37,14 +40,21 @@ public class RootResource {
 	private String answer(String question) {
 		Matcher matcher = YESNO_QUESTION_PATTERN.matcher(question);
 		if (matcher.matches()) {
-			if (question.equals("Est ce que tu reponds toujours oui(OUI/NON)")) {
+			if (question.equals("Est+ce+que+tu+reponds+toujours+oui(OUI/NON)")) {
 				return ANSWER_NO;
 			}
 
 			return ANSWER_YES;
 		}
-
-		if (question.equals("Quelle est ton adresse email"))
+		Matcher matcherAddition = ADDITION_PATTERN.matcher(question);
+		if(matcherAddition.matches()) {
+			
+			
+			
+			return String.valueOf(Integer.parseInt(matcherAddition.group(1)) + Integer.parseInt(matcherAddition.group(2)));
+		}
+		
+		if (question.equals("Quelle+est+ton+adresse+email"))
 			return "gregory.bloquel@gmail.com";
 
 		return "";

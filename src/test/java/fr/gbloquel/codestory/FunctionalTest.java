@@ -93,6 +93,12 @@ public class FunctionalTest {
 		assertTextPresent("[{\"foo\":19},{\"foo\":12,\"bar\":1},{\"foo\":5,\"bar\":2},{\"foo\":8,\"qix\":1},{\"foo\":1,\"bar\":1,\"qix\":1}]"); 
 	}
 	
+	@Test
+	public void should_add_1_plus_1() {
+		beginAt("/?q=1+1");
+		assertTextPresent("2");
+	}
+	
 	
 
 }

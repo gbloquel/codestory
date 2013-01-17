@@ -39,6 +39,20 @@ public class ScalaskelResult {
 		countQix = 0;
 	}
 
+	/**
+	 * Constructor
+	 * @param foo
+	 * @param bar
+	 * @param qix
+	 * @param baz
+	 */
+	public ScalaskelResult(int foo, int bar, int qix, int baz) {
+		countBar = bar;
+		countBaz = baz;
+		countFoo = foo;
+		countQix = qix;
+	}
+	
 
 	public void setCountFoo(int countFoo) {
 		this.countFoo = countFoo;

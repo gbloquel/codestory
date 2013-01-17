@@ -84,7 +84,15 @@ public class FunctionalTest {
 	@Test
 	public void should_scalaskel_change_7() {
 		beginAt("/scalaskel/change/7");
-		assertTextPresent("[{\"bar\":1},{\"foo\":7}]"); 
+		assertTextPresent("[{\"foo\":7},{\"bar\":1}]"); 
 	}
+	
+	@Test
+	public void should_scalaskel_change_19() {
+		beginAt("/scalaskel/change/19");
+		assertTextPresent("[{\"foo\":19},{\"foo\":12,\"bar\":1},{\"foo\":5,\"bar\":2},{\"foo\":8,\"qix\":1},{\"foo\":1,\"bar\":1,\"qix\":1}]"); 
+	}
+	
+	
 
 }

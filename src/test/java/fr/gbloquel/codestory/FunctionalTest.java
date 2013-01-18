@@ -106,9 +106,15 @@ public class FunctionalTest {
 	}
 	
 	@Test
-	public void should_add_1_2_multiplication_3() {
+	public void should_add_1_2_multiplication_2() {
 		beginAt("/?q=(1+2)*2");
 		assertTextPresent("6");
+	}
+	
+	@Test
+	public void should_add_1_2_divise_2() {
+		beginAt("/?q=(1+2)/2");
+		assertTextPresent("1,5");
 	}
 	
 

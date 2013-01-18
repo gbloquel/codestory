@@ -99,6 +99,11 @@ public class FunctionalTest {
 		assertTextPresent("2");
 	}
 	
+	@Test
+	public void should_multiple_1_plus_1() {
+		beginAt("/?q=1*1");
+		assertTextPresent("1");
+	}
 	
 
 }

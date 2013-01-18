@@ -20,6 +20,7 @@ public class RootResource {
 
 	private static final Pattern ADDITION_PATTERN = Pattern.compile("(\\d)\\+(\\d)");
 	
+	private static final Pattern MULTIPLICATION_PATTERN = Pattern.compile("(\\d)\\*(\\d)");
 	
 	@GET
 	public Response question(@Encoded @QueryParam("q") String question) {
@@ -48,10 +49,12 @@ public class RootResource {
 		}
 		Matcher matcherAddition = ADDITION_PATTERN.matcher(question);
 		if(matcherAddition.matches()) {
-			
-			
-			
 			return String.valueOf(Integer.parseInt(matcherAddition.group(1)) + Integer.parseInt(matcherAddition.group(2)));
+		}
+		
+		Matcher matcherMultiplication = MULTIPLICATION_PATTERN.matcher(question);
+		if(matcherMultiplication.matches()) {
+			return String.valueOf(Integer.parseInt(matcherMultiplication.group(1)) * Integer.parseInt(matcherMultiplication.group(2)));
 		}
 		
 		if (question.equals("Quelle+est+ton+adresse+email"))

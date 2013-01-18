@@ -3,6 +3,9 @@ package fr.gbloquel.codestory.services;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.ws.rs.Encoded;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -60,7 +63,37 @@ public class RootResource {
 		if (question.equals("Quelle+est+ton+adresse+email"))
 			return "gregory.bloquel@gmail.com";
 
+		String operationResult = computeComplexeOperation(question);
+		if(operationResult.length() > 0) return operationResult;
+		
+		
+		
 		return "";
 	}
 
+	/**
+	 * Compute a complex operation like (1+2)*2
+	 * @param operation
+	 * @return result if possible else empty
+	 */
+	private String computeComplexeOperation(String operation) {
+		String resultat = "";
+	
+		try {
+			ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+			ScriptEngine engine = scriptEngineManager.getEngineByName("JavaScript");
+			
+			resultat = Double.toString((Double)engine.eval(operation));
+			if(resultat.endsWith(".0")) {
+				resultat = resultat.replace(".0", "");
+			}
+			return resultat;
+			
+		} catch (ScriptException e) {
+			
+		}
+		return resultat;
+	}
+	
+	
 }

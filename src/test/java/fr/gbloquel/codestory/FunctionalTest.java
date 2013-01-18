@@ -117,5 +117,11 @@ public class FunctionalTest {
 		assertTextPresent("1,5");
 	}
 	
+	@Test
+	public void should_add_1_5_multiple_4() {
+		beginAt("/?q=1,5*4");
+		assertTextPresent("6");
+	}
+	
 
 }

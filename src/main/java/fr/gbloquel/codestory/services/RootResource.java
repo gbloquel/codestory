@@ -83,6 +83,12 @@ public class RootResource {
 			ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 			ScriptEngine engine = scriptEngineManager.getEngineByName("JavaScript");
 			
+			// convert french notation into internation notation 
+			if(operation.contains(",")) {
+				operation = operation.replace(",", ".");
+			}
+			
+			
 			resultat = Double.toString((Double)engine.eval(operation));
 			if(resultat.endsWith(".0")) { // Suppress .0 example 6.0 --> 6
 				resultat = resultat.replace(".0", ""); 

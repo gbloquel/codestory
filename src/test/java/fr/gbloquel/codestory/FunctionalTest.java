@@ -123,5 +123,11 @@ public class FunctionalTest {
 		assertTextPresent("6");
 	}
 	
+	@Test
+	public void should_big_operation() {
+		beginAt("?q=((1,1+2)+3,14+4+(5+6+7)+(8+9+10)*4267387833344334647677634)/2*553344300034334349999000");
+		assertTextPresent("31878018903828901761984975061078744643351263313920");
+	}
+	
 
 }

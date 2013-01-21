@@ -92,16 +92,19 @@ public class RootResource {
 			
 			resultat = String.valueOf(new GroovyShell().evaluate(operation));
 			
-			if(resultat.contains(".")) { // Translate result in french notation
-				resultat = resultat.replace(".", ",");
-			}
-			
 			if(resultat.endsWith(".0")) { // If ended by .0 suppress
 				resultat = resultat.replace(".0", "");
 			}
 			if(resultat.endsWith(".00")) { // If ended by .0 suppress
 				resultat = resultat.replace(".00", "");
 			}
+			
+			
+			if(resultat.contains(".")) { // Translate result in french notation
+				resultat = resultat.replace(".", ",");
+			}
+			
+			
 			
 			return resultat;
 			

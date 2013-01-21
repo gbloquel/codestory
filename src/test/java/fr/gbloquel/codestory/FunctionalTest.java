@@ -129,5 +129,11 @@ public class FunctionalTest {
 		assertTextPresent("31878018903828899277492024491376690701584023926880");
 	}
 	
+	@Test
+	public void shoud_good_night() {
+		beginAt("/?q=As+tu+passe+une+bonne+nuit+malgre+les+bugs+de+l+etape+precedente(PAS_TOP/BOF/QUELS_BUGS)");
+		assertTextPresent("QUELS_BUGS");
+	}
+	
 
 }

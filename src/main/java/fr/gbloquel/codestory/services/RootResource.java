@@ -65,6 +65,9 @@ public class RootResource {
 		if (question.equals("Quelle+est+ton+adresse+email"))
 			return "gregory.bloquel@gmail.com";
 
+		if(question.equals("As+tu+passe+une+bonne+nuit+malgre+les+bugs+de+l+etape+precedente(PAS_TOP/BOF/QUELS_BUGS)"))
+			return "QUELS_BUGS";
+		
 		String operationResult = computeComplexeOperation(question);
 		if(operationResult.length() > 0) return operationResult;
 		

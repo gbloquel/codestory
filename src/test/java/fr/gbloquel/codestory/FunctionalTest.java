@@ -5,6 +5,8 @@ import static net.sourceforge.jwebunit.junit.JWebUnit.beginAt;
 import static net.sourceforge.jwebunit.junit.JWebUnit.setBaseUrl;
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import javax.ws.rs.core.MediaType;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -135,5 +137,29 @@ public class FunctionalTest {
 		assertTextPresent("QUELS_BUGS");
 	}
 	
+	@Test
+	public void should_received_2nd_text() {
+		beginAt("?q=As+tu+bien+recu+le+second+enonce(OUI/NON)");
+		assertTextPresent("OUI");
+	}
+	
+	
+	@Test
+	public void should_jajascript_optimize() {
+		Client client = Client.create();
+
+		WebResource webResource = client
+				.resource("http://localhost:6543/jajascript/optimize");
+		
+		//JSon
+		String input = "[{ \"VOL\": \"MONAD42\", \"DEPART\": 0, \"DUREE\": 5, \"PRIX\": 10 },{ \"VOL\": \"META18\", \"DEPART\": 3, \"DUREE\": 7, \"PRIX\": 14 },{ \"VOL\": \"LEGACY01\", \"DEPART\": 5, \"DUREE\": 9, \"PRIX\": 8 },{ \"VOL\": \"YAGNI17\", \"DEPART\": 5, \"DUREE\": 9, \"PRIX\": 7 }]";
+		 
+		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON)
+		   .post(ClientResponse.class, input);
+
+		assertThat(response).isNotNull();
+		assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
+		
+	}
 
 }

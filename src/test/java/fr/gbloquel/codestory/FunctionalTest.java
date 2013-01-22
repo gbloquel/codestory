@@ -154,7 +154,7 @@ public class FunctionalTest {
 		//JSon
 		String input = "[{ \"VOL\": \"MONAD42\", \"DEPART\": 0, \"DUREE\": 5, \"PRIX\": 10 },{ \"VOL\": \"META18\", \"DEPART\": 3, \"DUREE\": 7, \"PRIX\": 14 },{ \"VOL\": \"LEGACY01\", \"DEPART\": 5, \"DUREE\": 9, \"PRIX\": 8 },{ \"VOL\": \"YAGNI17\", \"DEPART\": 5, \"DUREE\": 9, \"PRIX\": 7 }]";
 		 
-		ClientResponse response = webResource.type(MediaType.APPLICATION_JSON)
+        ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED)
 		   .post(ClientResponse.class, input);
 
 		assertThat(response).isNotNull();

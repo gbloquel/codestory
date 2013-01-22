@@ -2,6 +2,7 @@ package fr.gbloquel.codestory.services;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,11 +22,12 @@ public class JajaScriptResource {
 	
 	@POST
 	@Path("optimize")
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response optimize(List<Command> commands) {
+    public Response optimize(List<Command> commands) {
 		
-		for(Command command: commands) {
-			logger.info(command.toString());
+        for (Command command : commands) {
+            logger.info(command.toString());
 		}
 
 		return Response.status(201).build();

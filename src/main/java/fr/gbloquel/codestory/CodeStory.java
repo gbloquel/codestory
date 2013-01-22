@@ -30,6 +30,9 @@ public class CodeStory {
 				"fr.gbloquel.codestory.services");
 		sh.setInitParameter("com.sun.jersey.api.json.POJOMappingFeature", "true");
 		
+        sh.setInitParameter("com.sun.jersey.spi.container.ContainerRequestFilters",
+                "fr.gbloquel.codestory.listener.ContentTypeFilter");
+
 		Server server = new Server(6543);
 
 		ServletContextHandler context = new ServletContextHandler(server, "/",

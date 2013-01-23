@@ -22,102 +22,142 @@ import fr.gbloquel.codestory.jajascript.Result;
 @Path("/jajascript")
 public class JajaScriptResource {
 
-	private static final Logger logger =
-		    LoggerFactory.getLogger(JajaScriptResource.class);
-	
+	private static final Logger logger = LoggerFactory
+			.getLogger(JajaScriptResource.class);
+
 	@POST
 	@Path("optimize")
-    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Consumes({ MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces(MediaType.APPLICATION_JSON)
-    public Response optimize(List<Command> commands) {
-		
-        Result result = new Result();
-        logger.info("********");
+	public Response optimize(List<Command> commands) {
 
-        for (Command command : commands) {
-            logger.info(command.toString());
+		Result result = new Result();
+		logger.info("********");
+
+		for (Command command : commands) {
+			logger.info(command.toString());
 		}
 
-        logger.info("********");
+		logger.info("********");
 
-        processResult(commands, result);
+		processResult(commands, result);
 
-        return Response.status(201).entity(result).build();
+		return Response.status(201).entity(result).build();
 	}
 
-    private void processResult(final List<Command> commands, final Result bestResult) {
+	
+	/**
+	 * 
+	 * @param commands
+	 * @param bestResult
+	 */
+	private void processResult(final List<Command> commands,
+			final Result bestResult) {
 
-        // Sort the commands.
-        orderCommandsByStartTime(commands);
+		// Sort the commands.
+		orderCommandsByStartTime(commands);
 
-        // Get the First command
-        if (commands.size() >= 1) {
+		
+		// Iterate on each command: This command will be the start
+		int sizeCommands = commands.size();
+		for(int i = 0; i < sizeCommands; i++) {
+		
+			Result result = new Result();
+			iterateOnSubCommands(commands.subList(i, sizeCommands), result);
+			
+			// The result is better ?
+			if (result.getProfit() > bestResult.getProfit()) {
+				bestResult.update(result);
+			}
+			
+		}
+	}
 
-            for (Command command : commands) {
-                Result result = new Result();
-                addCommandInResult(result, command);
-                Command possibleCommand = getNextCommandPossible(command, commands);
+	/**
+	 * Iterate on each subCommand
+	 * @param commands
+	 * @param result
+	 */
+	private void iterateOnSubCommands(List<Command> commands, Result result) {
+		
+		// Check if commands exists again 
+		if (commands.size() >= 1) {
 
-                if (possibleCommand != null) {
-                    addCommandInResult(result, possibleCommand);
-                }
-                
-                if(result.getProfit() > bestResult.getProfit()) {
-                    bestResult.update(result);
-                }
+			// Get the first command from list
+			Command startCommand = commands.get(0);
 
-            }
+			// Add the command in result
+			addCommandInResult(result, startCommand);
+			
+			// Find if it exists a command possible
+			Command possibleCommand = getNextCommandPossible(startCommand,commands);
+			
+			// If yes recursive call
+			if (possibleCommand != null) {
+				addCommandInResult(result, possibleCommand);
+				iterateOnSubCommands(
+						suppressCommandUntilPossibleComamnd(commands,
+								possibleCommand), result); // CDR command
+			}
+		}
+		
+	}
+	
+	
+	private List<Command> suppressCommandUntilPossibleComamnd(List<Command> commands, Command possibleCommand) {
+		
+		
+		int indexPossibleCommand  = commands.indexOf(possibleCommand);
+		
+		if(commands.size() > indexPossibleCommand) {
+			return commands.subList(indexPossibleCommand, commands.size());
+		}
+		
+		return Lists.newArrayList();
+	}
+	
+	
+	private void addCommandInResult(Result result, Command command) {
+		if (!result.getFlightPaths().contains(command.getFlightID())) {
 
-        }
-    }
+			result.setProfit(result.getProfit() + command.getPrice());
+			result.getFlightPaths().add(command.getFlightID());
+		}
+	}
 
+	private Command getNextCommandPossible(Command previousCommand,
+			List<Command> commands) {
+		Command commandNext = null;
+		if (commands.size() >= 1) {
+			// Iterate command
+			for (Command command : commands) {
 
-    private void addCommandInResult(Result result, Command command) {
-        result.setProfit(result.getProfit() + command.getPrice());
-        result.getFlightPaths().add(command.getFlightID());
-    }
+				if (previousCommand == command) {
+					continue;
+				}
 
-    private Command getNextCommandPossible(Command previousCommand, List<Command> commands) {
-        Command commandNext = null;
-        if (commands.size() >= 1) {
-            // Iterate command
-            for (Command command : commands) {
+				if ((previousCommand.getStartTime() + previousCommand
+						.getEllaspedTime()) > command.getStartTime()) {
+					continue;
+				}
 
-                if (previousCommand == command) {
-                    continue;
-                }
+				// command found
+				return command;
+			}
+		}
+		return commandNext;
+	}
 
-                if ((previousCommand.getStartTime() + previousCommand.getEllaspedTime()) > command.getStartTime()) {
-                    continue;
-                }
-
-                // command found
-                return command;
-            }
-        }
-        return commandNext;
-    }
-
-    /**
-     * Order the commands by start Time.
-     * 
-     * @param commands
-     *            the command list
-     */
-    @VisibleForTesting
-    void orderCommandsByStartTime(List<Command> commands) {
-        Collections.sort(commands);
-    }
-
-    public static void main(String[] args) {
-
-        List<Command> commands = Lists.newArrayList(new Command("FLIGHT-A", 0, 2, 3));
-
-        Result result = new Result();
-        new JajaScriptResource().processResult(commands, result);
-
-        System.out.println("RESULT=" + result.toString());
-
-    }
+	/**
+	 * Order the commands by start Time.
+	 * 
+	 * @param commands
+	 *            the command list
+	 */
+	@VisibleForTesting
+	void orderCommandsByStartTime(List<Command> commands) {
+		Collections.sort(commands);
+	}
 
 }

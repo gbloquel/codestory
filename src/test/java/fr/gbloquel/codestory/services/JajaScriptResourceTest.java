@@ -116,6 +116,22 @@ public class JajaScriptResourceTest {
         assertThat(response.getEntity().toString()).isEqualTo("Result{gain=18, path=[MONAD42, LEGACY01]}");
 
     }
+    
+    @Test
+    public void testTreeCommands() {
+    	Command command1 =  new Command("AF1", 0, 1, 2); 
+        Command command2 = new Command("AF2", 4, 1, 4); 
+        Command command3 = new Command("AF3", 2, 1, 6);
+        
+        List<Command> commands = Lists.newArrayList(command1, command2, command3);
+
+        Response response = jajaScriptResource.optimize(commands);
+
+        assertThat(response.getEntity().toString()).isEqualTo("Result{gain=12, path=[AF1, AF3, AF2]}");
+    	
+    }
+    
+    
 
 
 }

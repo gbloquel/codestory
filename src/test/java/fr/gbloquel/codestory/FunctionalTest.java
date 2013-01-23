@@ -161,7 +161,7 @@ public class FunctionalTest {
         assertThat(response).isNotNull();
         assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
         String responseAsString = IOUtils.toString(response.getEntityInputStream());
-        assertThat(responseAsString).isEqualTo("{\"gain\" : 10,\"path\" : [\"MONAD42\"]}");
+        assertThat(responseAsString).isEqualTo("{\"gain\":10,\"path\":[\"MONAD42\"]}");
 
     }
 	
@@ -182,7 +182,7 @@ public class FunctionalTest {
         assertThat(response).isNotNull();
         assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
         String responseAsString = IOUtils.toString(response.getEntityInputStream());
-        assertThat(responseAsString).isEqualTo("{\"gain\" : 18,\"path\" : [\"MONAD42\",\"LEGACY01\"]}");
+        assertThat(responseAsString).isEqualTo("{\"gain\":18,\"path\":[\"MONAD42\",\"LEGACY01\"]}");
 		
 	}
 

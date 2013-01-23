@@ -9,7 +9,7 @@ import com.google.common.base.Objects;
  * @author greg
  *
  */
-public class Command {
+public class Command implements Comparable<Command> {
 
 	@JsonProperty("VOL")
 	private String flightID;
@@ -24,6 +24,28 @@ public class Command {
 	@JsonProperty("PRIX")
 	private long price;
 	
+    /**
+     * Default constructor
+     */
+    public Command() {
+
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param flightID
+     * @param startTime
+     * @param ellapsedTime
+     * @param price
+     */
+    public Command(String flightID, int startTime, long ellapsedTime, long price) {
+        this.flightID = flightID;
+        this.ellaspedTime = ellapsedTime;
+        this.price = price;
+        this.startTime = startTime;
+    }
+
 	public String getFlightID() {
 		return flightID;
 	}
@@ -65,4 +87,21 @@ public class Command {
 				.add("price", price)
 					.toString();
 	}
+
+    @Override
+    public int compareTo(Command command) {
+        if (this == command) {
+            return 0;
+        }
+
+        if (this.startTime < command.startTime) {
+            return -1;
+        }
+
+        if (this.startTime > command.startTime) {
+            return 1;
+        }
+        return 0;
+    }
+
 }

@@ -5,8 +5,11 @@ import static net.sourceforge.jwebunit.junit.JWebUnit.beginAt;
 import static net.sourceforge.jwebunit.junit.JWebUnit.setBaseUrl;
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.io.IOException;
+
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -143,9 +146,28 @@ public class FunctionalTest {
 		assertTextPresent("OUI");
 	}
 	
+    @Test
+    public void should_jajascript_optimize_one_flight() throws IOException {
+        Client client = Client.create();
+
+        WebResource webResource = client.resource("http://localhost:6543/jajascript/optimize");
+
+        // JSon
+        String input = "[{ \"VOL\": \"MONAD42\", \"DEPART\": 0, \"DUREE\": 5, \"PRIX\": 10 }]";
+
+        ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class,
+                input);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
+        String responseAsString = IOUtils.toString(response.getEntityInputStream());
+        assertThat(responseAsString).isEqualTo("{\"gain\" : 10,\"path\" : [\"MONAD42\"]}");
+
+    }
 	
+
 	@Test
-	public void should_jajascript_optimize() {
+    public void should_jajascript_optimize() throws IOException {
 		Client client = Client.create();
 
 		WebResource webResource = client
@@ -154,11 +176,13 @@ public class FunctionalTest {
 		//JSon
 		String input = "[{ \"VOL\": \"MONAD42\", \"DEPART\": 0, \"DUREE\": 5, \"PRIX\": 10 },{ \"VOL\": \"META18\", \"DEPART\": 3, \"DUREE\": 7, \"PRIX\": 14 },{ \"VOL\": \"LEGACY01\", \"DEPART\": 5, \"DUREE\": 9, \"PRIX\": 8 },{ \"VOL\": \"YAGNI17\", \"DEPART\": 5, \"DUREE\": 9, \"PRIX\": 7 }]";
 		 
-        ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED)
-		   .post(ClientResponse.class, input);
+        ClientResponse response = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class,
+                input);
 
-		assertThat(response).isNotNull();
-		assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
+        assertThat(response).isNotNull();
+        assertThat(response.getClientResponseStatus()).isEqualTo(ClientResponse.Status.CREATED);
+        String responseAsString = IOUtils.toString(response.getEntityInputStream());
+        assertThat(responseAsString).isEqualTo("{\"gain\" : 18,\"path\" : [\"MONAD42\",\"LEGACY01\"]}");
 		
 	}
 

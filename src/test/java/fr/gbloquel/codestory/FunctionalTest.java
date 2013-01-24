@@ -185,5 +185,11 @@ public class FunctionalTest {
         assertThat(responseAsString).isEqualTo("{\"gain\":18,\"path\":[\"MONAD42\",\"LEGACY01\"]}");
 		
 	}
+	
+	@Test
+	public void should_copy_code_ndeloof() {
+		beginAt("/?q=As+tu+copie+le+code+de+ndeloof(OUI/NON/JE_SUIS_NICOLAS)");
+		assertTextPresent("NON");
+	}
 
 }

@@ -2,6 +2,7 @@ package fr.gbloquel.codestory.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import fr.gbloquel.codestory.jajascript.Command;
 import fr.gbloquel.codestory.jajascript.Result;
@@ -25,6 +27,8 @@ public class JajaScriptResource {
 	private static final Logger logger = LoggerFactory
 			.getLogger(JajaScriptResource.class);
 
+	private Map<Command, List<Command>> cacheCommand = Maps.newHashMap(); 
+	
 	@POST
 	@Path("optimize")
 	@Consumes({ MediaType.APPLICATION_JSON,
@@ -58,10 +62,7 @@ public class JajaScriptResource {
 
 			Result resultIteration = processSubCommand(commands.subList(i, sizeCommands), bestResult, new Result());
 
-			// The result is better ?
-			if (resultIteration.getProfit() > bestResult.getProfit()) {
-				bestResult.update(resultIteration);
-			}
+			checkIfBetterResult(bestResult, resultIteration);
 
 		}
 		return bestResult;
@@ -76,26 +77,27 @@ public class JajaScriptResource {
 	 */
 	private List<Command> computeListCommandPossible(Command commandRoot, List<Command> commands) {
 		
-		List<Command> commandsPossible = Lists.newArrayList();
+		List<Command> commandsPossible = Lists.newLinkedList();
 		
-		if (commands.size() >= 1) {
-			// Iterate command
-			for (Command command : commands) {
-
-				if (commandRoot == command) {
-					continue;
+		if(!cacheCommand.containsKey(commandRoot)) {
+		
+			if (commands.size() >= 1) {
+				// Iterate command
+				for (Command command : commands) {
+	
+					if ((commandRoot.getStartTime() + commandRoot
+							.getEllaspedTime()) > command.getStartTime()) {
+						continue;
+					}
+	
+					// command found
+					commandsPossible.add(command);
 				}
-
-				if ((commandRoot.getStartTime() + commandRoot
-						.getEllaspedTime()) > command.getStartTime()) {
-					continue;
-				}
-
-				// command found
-				commandsPossible.add(command);
 			}
+			cacheCommand.put(commandRoot, commandsPossible);
+		} else {
+			commandsPossible = cacheCommand.get(commandRoot);
 		}
-		
 		return commandsPossible;
 	}
 	
@@ -132,20 +134,26 @@ public class JajaScriptResource {
 					}
 				} else { // No more element => update the result and check if bestResult
 					updateResultFromCommand(resultInProgress, commandsToBeTested.get(0));
-					if (resultInProgress.getProfit() > bestResult.getProfit()) {
-						bestResult.update(resultInProgress);
-					}
+					checkIfBetterResult(bestResult, resultInProgress);
 				}
 				
 			} else { // If any commands we are in bottow level.
-				// The result is better ?
-				if (resultInProgress.getProfit() > bestResult.getProfit()) {
-					bestResult.update(resultInProgress);
-				}
+				checkIfBetterResult(bestResult, resultInProgress);
 			}
 
 		}
 		return bestResult;
+	}
+
+	/**
+	 * Check if resultinprogress is better than best Result, if yes update.
+	 * @param bestResult
+	 * @param resultInProgress
+	 */
+	private void checkIfBetterResult(Result bestResult, Result resultInProgress) {
+		if (resultInProgress.getProfit() > bestResult.getProfit()) {
+			bestResult.update(resultInProgress);
+		}
 	}
 	
 	/**
@@ -163,7 +171,7 @@ public class JajaScriptResource {
 			return commands.subList(indexPossibleCommand + 1, commands.size());
 		}
 
-		return Lists.newArrayList();
+		return Lists.newLinkedList();
 	}
 	
 	
@@ -194,7 +202,7 @@ public class JajaScriptResource {
 			return commands.subList(indexPossibleCommand, commands.size());
 		}
 
-		return Lists.newArrayList();
+		return Lists.newLinkedList();
 	}
 	
 

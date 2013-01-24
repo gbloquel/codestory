@@ -32,7 +32,6 @@ public class JajaScriptResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response optimize(List<Command> commands) {
 
-		Result result = new Result();
 		logger.info("********");
 
 		for (Command command : commands) {
@@ -41,113 +40,163 @@ public class JajaScriptResource {
 
 		logger.info("********");
 
-		processResult(commands, result);
+		Result result = processResult(commands);
 
 		return Response.status(201).entity(result).build();
 	}
 
-	
-	/**
-	 * 
-	 * @param commands
-	 * @param bestResult
-	 */
-	private void processResult(final List<Command> commands,
-			final Result bestResult) {
+	private Result processResult(final List<Command> commands) {
 
-		// Sort the commands.
+		Result bestResult = new Result();
+		
+		// Sort the commands by startTime
 		orderCommandsByStartTime(commands);
 
-		
 		// Iterate on each command: This command will be the start
 		int sizeCommands = commands.size();
-		for(int i = 0; i < sizeCommands; i++) {
-		
-			Result result = new Result();
-			iterateOnSubCommands(commands.subList(i, sizeCommands), result);
-			
+		for (int i = 0; i < sizeCommands; i++) {
+
+			Result resultIteration = processSubCommand(commands.subList(i, sizeCommands), bestResult, new Result());
+
 			// The result is better ?
-			if (result.getProfit() > bestResult.getProfit()) {
-				bestResult.update(result);
+			if (resultIteration.getProfit() > bestResult.getProfit()) {
+				bestResult.update(resultIteration);
 			}
-			
+
 		}
+		return bestResult;
+
 	}
 
 	/**
-	 * Iterate on each subCommand
+	 * Compute the
+	 * @param commandRoot
+	 * @param commands
+	 * @return list of commands where commandRoot have path Possible limited at one level
+	 */
+	private List<Command> computeListCommandPossible(Command commandRoot, List<Command> commands) {
+		
+		List<Command> commandsPossible = Lists.newArrayList();
+		
+		if (commands.size() >= 1) {
+			// Iterate command
+			for (Command command : commands) {
+
+				if (commandRoot == command) {
+					continue;
+				}
+
+				if ((commandRoot.getStartTime() + commandRoot
+						.getEllaspedTime()) > command.getStartTime()) {
+					continue;
+				}
+
+				// command found
+				commandsPossible.add(command);
+			}
+		}
+		
+		return commandsPossible;
+	}
+	
+	/**
+	 * process on each subCommand
+	 * 
 	 * @param commands
 	 * @param result
 	 */
-	private void iterateOnSubCommands(List<Command> commands, Result result) {
+	private Result processSubCommand(List<Command> commands,Result bestResult, Result resultInProgress) {
 		
-		// Check if commands exists again 
+		
+		// Check if commands exists again
 		if (commands.size() >= 1) {
 
 			// Get the first command from list
 			Command startCommand = commands.get(0);
 
 			// Add the command in result
-			addCommandInResult(result, startCommand);
+			updateResultFromCommand(resultInProgress, startCommand);
+
 			
-			// Find if it exists a command possible
-			Command possibleCommand = getNextCommandPossible(startCommand,commands);
+			List<Command> commandsToBeTested = computeListCommandPossible(startCommand, suppressCommandUntilNextPossibleCommand(commands, startCommand));
 			
-			// If yes recursive call
-			if (possibleCommand != null) {
-				addCommandInResult(result, possibleCommand);
-				iterateOnSubCommands(
-						suppressCommandUntilPossibleComamnd(commands,
-								possibleCommand), result); // CDR command
+			if(!commandsToBeTested.isEmpty()) {
+				
+				if(commandsToBeTested.size() >= 1) {
+					for(Command commandToTest: commandsToBeTested) {
+						Result resultTemp = new Result();
+						resultTemp.update(resultInProgress);
+						
+						processSubCommand(suppressCommandUntilPossibleCommand(commands, commandToTest), bestResult, resultTemp);
+						
+					}
+				} else { // No more element => update the result and check if bestResult
+					updateResultFromCommand(resultInProgress, commandsToBeTested.get(0));
+					if (resultInProgress.getProfit() > bestResult.getProfit()) {
+						bestResult.update(resultInProgress);
+					}
+				}
+				
+			} else { // If any commands we are in bottow level.
+				// The result is better ?
+				if (resultInProgress.getProfit() > bestResult.getProfit()) {
+					bestResult.update(resultInProgress);
+				}
 			}
+
 		}
-		
+		return bestResult;
 	}
 	
-	
-	private List<Command> suppressCommandUntilPossibleComamnd(List<Command> commands, Command possibleCommand) {
-		
-		
-		int indexPossibleCommand  = commands.indexOf(possibleCommand);
-		
-		if(commands.size() > indexPossibleCommand) {
-			return commands.subList(indexPossibleCommand, commands.size());
+	/**
+	 * Return the list after the command specified.
+	 * @param commands
+	 * @param possibleCommand
+	 * @return the list after the element
+	 */
+	private List<Command> suppressCommandUntilNextPossibleCommand(
+			List<Command> commands, Command possibleCommand) {
+
+		int indexPossibleCommand = commands.indexOf(possibleCommand);
+
+		if (commands.size() > indexPossibleCommand) {
+			return commands.subList(indexPossibleCommand + 1, commands.size());
 		}
-		
+
 		return Lists.newArrayList();
 	}
 	
 	
-	private void addCommandInResult(Result result, Command command) {
-		if (!result.getFlightPaths().contains(command.getFlightID())) {
-
+	/**
+	 * Update the Result with command.
+	 * @param result
+	 * @param command
+	 */
+	
+	private void updateResultFromCommand(Result result, Command command) {
 			result.setProfit(result.getProfit() + command.getPrice());
-			result.getFlightPaths().add(command.getFlightID());
-		}
+			result.getFlightPaths().add(command.getFlightID());	
 	}
+	
+	
+	/**
+	 * Return the list from the element
+	 * @param commands
+	 * @param possibleCommand
+	 * @return list
+	 */
+	private List<Command> suppressCommandUntilPossibleCommand(
+			List<Command> commands, Command possibleCommand) {
 
-	private Command getNextCommandPossible(Command previousCommand,
-			List<Command> commands) {
-		Command commandNext = null;
-		if (commands.size() >= 1) {
-			// Iterate command
-			for (Command command : commands) {
+		int indexPossibleCommand = commands.indexOf(possibleCommand);
 
-				if (previousCommand == command) {
-					continue;
-				}
-
-				if ((previousCommand.getStartTime() + previousCommand
-						.getEllaspedTime()) > command.getStartTime()) {
-					continue;
-				}
-
-				// command found
-				return command;
-			}
+		if (commands.size() > indexPossibleCommand) {
+			return commands.subList(indexPossibleCommand, commands.size());
 		}
-		return commandNext;
+
+		return Lists.newArrayList();
 	}
+	
 
 	/**
 	 * Order the commands by start Time.

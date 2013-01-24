@@ -6,6 +6,7 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * This class contains the response.
@@ -40,8 +41,13 @@ public class Result {
      */
     public void update(Result result) {
         this.profit = result.getProfit();
+        
+        List<String> listTemp = Lists.newArrayList();
+        for(String flight: result.flightPaths) {
+        	listTemp.add(new String(flight));
+        }
         this.getFlightPaths().clear();
-        for (String flight : result.getFlightPaths()) {
+        for (String flight : listTemp) {
             this.flightPaths.add(new String(flight));
         }
     }

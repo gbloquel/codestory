@@ -59,11 +59,18 @@ public class JajaScriptResource {
 		// Iterate on each command: This command will be the start
 		int sizeCommands = commands.size();
 		for (int i = 0; i < sizeCommands; i++) {
+			
+			List<Command> commandsToTested = commands.subList(i, sizeCommands);
+			
+			if(!bestResult.getFlightPaths().contains(commandsToTested.get(0).getFlightID())){
+			
+				Result resultIteration = processSubCommand(commandsToTested, bestResult, new Result());
 
-			Result resultIteration = processSubCommand(commands.subList(i, sizeCommands), bestResult, new Result());
+				checkIfBetterResult(bestResult, resultIteration);
 
-			checkIfBetterResult(bestResult, resultIteration);
+			}
 
+			
 		}
 		return bestResult;
 

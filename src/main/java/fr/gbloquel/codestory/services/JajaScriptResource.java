@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import fr.gbloquel.codestory.jajascript.Command;
+import fr.gbloquel.codestory.jajascript.PlanningCommand;
 import fr.gbloquel.codestory.jajascript.Result;
 
 @Path("/jajascript")
@@ -26,8 +26,6 @@ public class JajaScriptResource {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(JajaScriptResource.class);
-
-	private Map<Command, List<Command>> cacheCommand = Maps.newHashMap(); 
 	
 	@POST
 	@Path("optimize")
@@ -50,168 +48,70 @@ public class JajaScriptResource {
 	}
 
 	private Result processResult(final List<Command> commands) {
-
 		Result bestResult = new Result();
+		
 		
 		// Sort the commands by startTime
 		orderCommandsByStartTime(commands);
 
-		// Iterate on each command: This command will be the start
-		int sizeCommands = commands.size();
-		for (int i = 0; i < sizeCommands; i++) {
+		// Map startTime, Profit contains best Hour 
+		Map<Integer, Long> bestHourProfits = Maps.newHashMap();
+		
+		// Map startTime
+		Map<Integer, PlanningCommand> bestPlanningCommands = Maps.newHashMap();
+		
+		/**
+		 * Iterate on each command
+		 */
+		for(int i = commands.size()-1; i >= 0; i--) {
+			Command currentCommand = commands.get(i);
 			
-			List<Command> commandsToTested = commands.subList(i, sizeCommands);
+			// Get the List depart
+			int bestNextDepart = findNextBestDepartPossible(currentCommand.getEndTime(), bestHourProfits);
+			PlanningCommand bestPlanningCommand = bestPlanningCommands.get(bestNextDepart);
 			
-			if(!bestResult.getFlightPaths().contains(commandsToTested.get(0).getFlightID())){
-			
-				Result resultIteration = processSubCommand(commandsToTested, bestResult, new Result());
-
-				checkIfBetterResult(bestResult, resultIteration);
-
+			// If no next depart possible.
+			if(bestPlanningCommand == null) {
+				bestHourProfits.put(currentCommand.getStartTime(), currentCommand.getPrice());
+				bestPlanningCommands.put(currentCommand.getStartTime(), new PlanningCommand(currentCommand));
+			} 
+			// If first Time for this startTime or this current command is better than the bestPlanning  we update the bestPlanning
+			else if(bestHourProfits.get(currentCommand.getStartTime()) == null || bestHourProfits.get(currentCommand.getStartTime()) <  (currentCommand.getPrice() + bestPlanningCommand.getProfitTotal())) {
+					bestPlanningCommands.put(currentCommand.getStartTime(), new PlanningCommand(currentCommand, bestPlanningCommand));
+					bestHourProfits.put(currentCommand.getStartTime(), currentCommand.getPrice() + bestPlanningCommand.getProfitTotal());
 			}
-
 			
-		}
-		return bestResult;
-
-	}
-
-	/**
-	 * Compute the
-	 * @param commandRoot
-	 * @param commands
-	 * @return list of commands where commandRoot have path Possible limited at one level
-	 */
-	private List<Command> computeListCommandPossible(Command commandRoot, List<Command> commands) {
-		
-		List<Command> commandsPossible = Lists.newLinkedList();
-		
-		if(!cacheCommand.containsKey(commandRoot)) {
-		
-			if (commands.size() >= 1) {
-				// Iterate command
-				for (Command command : commands) {
-	
-					if ((commandRoot.getStartTime() + commandRoot
-							.getEllaspedTime()) > command.getStartTime()) {
-						continue;
-					}
-	
-					// command found
-					commandsPossible.add(command);
-				}
-			}
-			cacheCommand.put(commandRoot, commandsPossible);
-		} else {
-			commandsPossible = cacheCommand.get(commandRoot);
-		}
-		return commandsPossible;
-	}
-	
-	/**
-	 * process on each subCommand
-	 * 
-	 * @param commands
-	 * @param result
-	 */
-	private Result processSubCommand(List<Command> commands,Result bestResult, Result resultInProgress) {
-		
-		
-		// Check if commands exists again
-		if (commands.size() >= 1) {
-
-			// Get the first command from list
-			Command startCommand = commands.get(0);
-
-			// Add the command in result
-			updateResultFromCommand(resultInProgress, startCommand);
-
-			
-			List<Command> commandsToBeTested = computeListCommandPossible(startCommand, suppressCommandUntilNextPossibleCommand(commands, startCommand));
-			
-			if(!commandsToBeTested.isEmpty()) {
-				
-				if(commandsToBeTested.size() >= 1) {
-					for(Command commandToTest: commandsToBeTested) {
-						Result resultTemp = new Result();
-						resultTemp.update(resultInProgress);
-						
-						processSubCommand(suppressCommandUntilPossibleCommand(commands, commandToTest), bestResult, resultTemp);
-						
-					}
-				} else { // No more element => update the result and check if bestResult
-					updateResultFromCommand(resultInProgress, commandsToBeTested.get(0));
-					checkIfBetterResult(bestResult, resultInProgress);
-				}
-				
-			} else { // If any commands we are in bottow level.
-				checkIfBetterResult(bestResult, resultInProgress);
+			// Update the bestResult if this solution is better.
+			if(bestResult.getProfit() < bestPlanningCommands.get(currentCommand.getStartTime()).getProfitTotal()) {
+				bestResult = bestPlanningCommands.get(currentCommand.getStartTime()).computeResult(new Result(), bestPlanningCommands.get(currentCommand.getStartTime()));
 			}
 
 		}
+		
+		
 		return bestResult;
 	}
-
+	
 	/**
-	 * Check if resultinprogress is better than best Result, if yes update.
-	 * @param bestResult
-	 * @param resultInProgress
+	 * Find the best next startTime with the best profit.
+	 * @param endTimePreviousCommand
+	 * @param bestHourProfits
+	 * @return the best next start time
 	 */
-	private void checkIfBetterResult(Result bestResult, Result resultInProgress) {
-		if (resultInProgress.getProfit() > bestResult.getProfit()) {
-			bestResult.update(resultInProgress);
+	private int findNextBestDepartPossible(long endTimePreviousCommand, Map<Integer,Long> bestHourProfits) {
+		
+		int bestStartTime = -1;
+		long bestProfit = -1;
+		
+		for(Integer startTime: bestHourProfits.keySet()) {
+			
+			if(endTimePreviousCommand <= startTime && bestHourProfits.get(startTime) > bestProfit) {
+				bestProfit = bestHourProfits.get(startTime);
+				bestStartTime = startTime; 
+			}
 		}
+		return bestStartTime;
 	}
-	
-	/**
-	 * Return the list after the command specified.
-	 * @param commands
-	 * @param possibleCommand
-	 * @return the list after the element
-	 */
-	private List<Command> suppressCommandUntilNextPossibleCommand(
-			List<Command> commands, Command possibleCommand) {
-
-		int indexPossibleCommand = commands.indexOf(possibleCommand);
-
-		if (commands.size() > indexPossibleCommand) {
-			return commands.subList(indexPossibleCommand + 1, commands.size());
-		}
-
-		return Lists.newLinkedList();
-	}
-	
-	
-	/**
-	 * Update the Result with command.
-	 * @param result
-	 * @param command
-	 */
-	
-	private void updateResultFromCommand(Result result, Command command) {
-			result.setProfit(result.getProfit() + command.getPrice());
-			result.getFlightPaths().add(command.getFlightID());	
-	}
-	
-	
-	/**
-	 * Return the list from the element
-	 * @param commands
-	 * @param possibleCommand
-	 * @return list
-	 */
-	private List<Command> suppressCommandUntilPossibleCommand(
-			List<Command> commands, Command possibleCommand) {
-
-		int indexPossibleCommand = commands.indexOf(possibleCommand);
-
-		if (commands.size() > indexPossibleCommand) {
-			return commands.subList(indexPossibleCommand, commands.size());
-		}
-
-		return Lists.newLinkedList();
-	}
-	
 
 	/**
 	 * Order the commands by start Time.

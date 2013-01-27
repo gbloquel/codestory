@@ -46,6 +46,12 @@ public class Command implements Comparable<Command> {
         this.startTime = startTime;
     }
 
+    
+    public long getEndTime() {
+    	return startTime + ellaspedTime;
+    }
+    
+    
 	public String getFlightID() {
 		return flightID;
 	}
@@ -94,6 +100,8 @@ public class Command implements Comparable<Command> {
             return 0;
         }
 
+        
+        
         if (this.startTime < command.startTime) {
             return -1;
         }

@@ -7,7 +7,6 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -155,8 +154,30 @@ public class JajaScriptResourceTest {
 	}
 	
 	
+    @Test
+    public void compute10Commands() {
+    
+    final List<Command> commands = Lists.newArrayList(
+            new Command("voiceless-regime-17", 0, 4, 13),
+            new Command("brainy-ufo-15", 1, 2, 1),
+            new Command("mushy-landscape-94", 2, 6, 1),
+            new Command("calm-keystroke-35", 4, 5, 7),
+            new Command("proud-thunderstorm-91", 5, 2, 2),
+            new Command("misty-puzzle-15", 5, 4, 14),
+            new Command("wild-tugboat-98", 6, 2, 5),
+            new Command("grumpy-cane-60", 7, 6, 6),
+            new Command("dull-summertime-36", 9, 5, 4),
+            new Command("soft-beige-12", 10, 2, 25)
+    );
+    
+    Response response = jajaScriptResource.optimize(commands);
+    assertThat(response.getEntity().toString()).isEqualTo("Result{gain=52, path=[voiceless-regime-17, misty-puzzle-15, soft-beige-12]}");
+    													
+    
+    }
+	
+	
 	@Test
-	@Ignore
 	public void testLevel33() {
 		Command command1 = new Command("energetic-collarbone-34", 1, 2, 28); 
 		Command command2 = new Command("weary-someone-49", 1, 4, 14); 
@@ -225,14 +246,13 @@ public class JajaScriptResourceTest {
 		Response response = jajaScriptResource.optimize(commands);
 		System.out.println("Temps ecoule=" + (System.currentTimeMillis() - startTime));
 		assertThat(response.getEntity().toString()).isEqualTo(
-				"Result{gain=18, path=[AF514, BA01]}");
+				"Result{gain=232, path=[energetic-collarbone-34, crazy-newsman-66, uninterested-toothbrush-46, selfish-marquee-45, annoyed-sneaker-6, gleaming-jackpot-63, broad-waiver-85, brainy-gristle-81, zealous-apathetic-74, bright-pot-10, dead-detergent-4, scrawny-pantry-29]}");
 		
 	}
 	
 	
 	
 	@Test
-	@Ignore
 	public void testLevel33_8() {
 Command command1  =  new Command("slow-symbolism-41", 3, 10, 26); 
 Command command2  =  new Command("swift-rehab-88", 0, 4, 18); 

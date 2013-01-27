@@ -23,7 +23,7 @@ import fr.gbloquel.codestory.jajascript.Result;
 
 @Path("/jajascript")
 public class JajaScriptResource {
-
+	
 	private static final Logger logger = LoggerFactory
 			.getLogger(JajaScriptResource.class);
 	
@@ -47,6 +47,12 @@ public class JajaScriptResource {
 		return Response.status(201).entity(result).build();
 	}
 
+	
+	/**
+	 * Search the soluce.
+	 * @param commands
+	 * @return the result
+	 */
 	private Result processResult(final List<Command> commands) {
 		Result bestResult = new Result();
 		
@@ -72,8 +78,12 @@ public class JajaScriptResource {
 			
 			// If no next depart possible.
 			if(bestPlanningCommand == null) {
-				bestHourProfits.put(currentCommand.getStartTime(), currentCommand.getPrice());
-				bestPlanningCommands.put(currentCommand.getStartTime(), new PlanningCommand(currentCommand));
+				//if no successor or if successor but no good.
+				if(bestHourProfits.get(currentCommand.getStartTime()) == null || (bestHourProfits.get(currentCommand.getStartTime()) != null && bestHourProfits.get(currentCommand.getStartTime()) < currentCommand.getPrice())) {
+					bestHourProfits.put(currentCommand.getStartTime(), currentCommand.getPrice());
+					bestPlanningCommands.put(currentCommand.getStartTime(), new PlanningCommand(currentCommand));
+				}
+				
 			} 
 			// If first Time for this startTime or this current command is better than the bestPlanning  we update the bestPlanning
 			else if(bestHourProfits.get(currentCommand.getStartTime()) == null || bestHourProfits.get(currentCommand.getStartTime()) <  (currentCommand.getPrice() + bestPlanningCommand.getProfitTotal())) {

@@ -246,7 +246,7 @@ public class JajaScriptResourceTest {
 		Response response = jajaScriptResource.optimize(commands);
 		System.out.println("Temps ecoule=" + (System.currentTimeMillis() - startTime));
 		assertThat(response.getEntity().toString()).isEqualTo(
-				"Result{gain=232, path=[energetic-collarbone-34, crazy-newsman-66, uninterested-toothbrush-46, selfish-marquee-45, annoyed-sneaker-6, gleaming-jackpot-63, broad-waiver-85, brainy-gristle-81, zealous-apathetic-74, bright-pot-10, dead-detergent-4, scrawny-pantry-29]}");
+				"Result{gain=238, path=[energetic-collarbone-34, crazy-newsman-66, uninterested-toothbrush-46, selfish-marquee-45, annoyed-sneaker-6, gleaming-jackpot-63, broad-waiver-85, brainy-gristle-81, zealous-apathetic-74, bright-pot-10, dead-detergent-4, glorious-wildlife-89, scrawny-pantry-29]}");
 		
 	}
 	
@@ -333,6 +333,83 @@ Command command60 =  new Command("clever-perpetrator-54", 59, 19, 5);
 		
 	}
 	
+	
+	@Test
+	public void test55Commands() {
+		Command command1  = new  Command("silent-gang-93",0, 3, 30); 
+		Command command2  = new  Command("shrill-theorist-24",0, 8, 6); 
+		Command command3  = new  Command("spotless-tinsel-31",2, 6, 7); 
+		Command command4  = new  Command("great-smog-86",0, 5, 9); 
+		Command command5  = new  Command("talented-stepson-87",1, 15, 1); 
+		Command command6  = new  Command("calm-stranger-39",9, 4, 7); 
+		Command command7  = new  Command("cute-grocer-55",6, 4, 10); 
+		Command command8  = new  Command("upset-union-27",8, 8, 4); 
+		Command command9  = new  Command("easy-pen-80",6, 10, 14); 
+		Command command10 = new  Command("lonely-word-48",8, 9, 1); 
+		Command command11 = new  Command("open-lake-51",14, 9, 26); 
+		Command command12 = new  Command("hollow-couch-6",11, 9, 5); 
+		Command command13 = new  Command("short-theorem-64",13, 3, 1); 
+		Command command14 = new  Command("delightful-conduit-61",10, 7, 7); 
+		Command command15 = new  Command("squealing-deer-23",12, 10, 4); 
+		Command command16 = new  Command("gigantic-badminton-55",15, 7, 20); 
+		Command command17 = new  Command("disturbed-newsletter-1",17, 5, 8); 
+		Command command18 = new  Command("miniature-dove-21",17, 3, 5); 
+		Command command19 = new  Command("worried-tights-99",16, 5, 15); 
+		Command command20 = new  Command("ill-quintuplet-44",18, 3, 3); 
+		Command command21 = new  Command("colorful-tent-92",24, 4, 22); 
+		Command command22 = new  Command("screeching-shrapnel-2",20, 1, 14); 
+		Command command23 = new  Command("amused-tailpipe-18",22, 10, 4); 
+		Command command24 = new  Command("fair-ace-11",20, 7, 15); 
+		Command command25 = new  Command("embarrassed-firefight-65",20, 10, 1); 
+		Command command26 = new  Command("mute-pluto-52",29, 8, 12); 
+		Command command27 = new  Command("brainy-bikini-83",28, 9, 19); 
+		Command command28 = new  Command("perfect-belt-63",27, 5, 8); 
+		Command command29 = new  Command("funny-refund-8",27, 6, 7); 
+		Command command30 = new  Command("narrow-image-40",27, 13, 6); 
+		Command command31 = new  Command("tense-wildebeest-74",32, 2, 1); 
+		Command command32 = new  Command("disturbed-superhighway-4",33, 4, 13); 
+		Command command33 = new  Command("proud-bamboo-52",34, 3, 2); 
+		Command command34 = new  Command("wrong-airplane-23",30, 2, 14); 
+		Command command35 = new  Command("handsome-penguin-48",31, 3, 4); 
+		Command command36 = new  Command("weary-apple-29",36, 6, 29); 
+		Command command37 = new  Command("exuberant-flax-59",35, 5, 22); 
+		Command command38 = new  Command("eager-curler-79",37, 7, 10); 
+		Command command39 = new  Command("outrageous-theater-1",37, 10, 9); 
+		Command command40 = new  Command("excited-skyscraper-68",39, 18, 1); 
+		Command command41 = new  Command("healthy-graphite-82",41, 6, 14); 
+		Command command42 = new  Command("helpful-blouse-24",44, 1, 19); 
+		Command command43 = new  Command("old-puppet-91",40, 4, 4); 
+		Command command44 = new  Command("low-airplane-26",44, 5, 8); 
+		Command command45 = new  Command("important-dragonfly-29",42, 3, 1); 
+		Command command46 = new  Command("glamorous-smugness-70",49, 8, 12); 
+		Command command47 = new  Command("cooing-tuber-18",48, 2, 6); 
+		Command command48 = new  Command("homely-halo-68",46, 7, 7); 
+		Command command49 = new  Command("wild-riffraff-62",45, 3, 15); 
+		Command command50 = new  Command("important-cervix-69",46, 19, 6); 
+		Command command51 = new  Command("curious-mannequin-64",51, 7, 13); //
+		Command command52 = new  Command("disturbed-crow-98",51, 8, 17); // 
+		Command command53 = new  Command("angry-marmalade-67",52, 6, 6); 
+		Command command54 = new  Command("crowded-mannequin-50",52, 4, 8); 
+		Command command55 = new  Command("smiling-squad-9",54, 2, 2);
+		
+
+		List<Command> commands = Lists.newArrayList(command1, command2, command3, command4,command5, command6, command7, command8,command9, command10,
+				command11, command12, command13, command14,command15, command16, command17, command18,command19, command20,
+				command21, command22, command23, command24,command25, command26, command27, command28,command29, command30,
+				command31, command32, command33, command34,command35, command36, command37, command38,command39, command40,
+				command41, command42, command43, command44,command45, command46, command47, command48,command49, command50,
+				command51, command52, command53, command54,command55);
+		
+		long startTime = System.currentTimeMillis();
+		
+		Response response = jajaScriptResource.optimize(commands);
+		System.out.println("Temps ecoule=" + (System.currentTimeMillis() - startTime));
+		assertThat(response.getEntity().toString()).isEqualTo(
+				"Result{gain=189, path=[silent-gang-93, cute-grocer-55, delightful-conduit-61, miniature-dove-21, screeching-shrapnel-2, colorful-tent-92, wrong-airplane-23, tense-wildebeest-74, weary-apple-29, helpful-blouse-24, wild-riffraff-62, cooing-tuber-18, disturbed-crow-98]}");
+																																					//curious-mannequin-64]}
+		
+		//
+	}
 	
 
 }

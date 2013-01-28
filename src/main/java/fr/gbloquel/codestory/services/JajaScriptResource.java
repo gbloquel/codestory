@@ -34,13 +34,13 @@ public class JajaScriptResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response optimize(List<Command> commands) {
 
-		logger.info("********");
-
-		for (Command command : commands) {
-			logger.info(command.toString());
-		}
-
-		logger.info("********");
+        /*
+         * logger.info("********");
+         * 
+         * for (Command command : commands) { logger.info(command.toString()); }
+         * 
+         * logger.info("********");
+         */
 
 		Result result = processResult(commands);
 
